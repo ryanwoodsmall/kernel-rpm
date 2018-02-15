@@ -2,11 +2,13 @@
 %define kmin 14
 %define kpat 19
 %define kver %{kmaj}.%{kmin}.%{kpat}
+%define krel 3
+%define kversion %{kver}-%{krel}
 
 Name: kernel
 Summary: The Linux Kernel
 Version: %{kver}
-Release: 2%{?dist}
+Release: %{krel}%{?dist}
 License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
@@ -44,6 +46,7 @@ against the %{version} kernel package.
 
 %prep
 %setup -q -n linux-%{version}
+sed -i.ORIG '/^EXTRAVERSION/ s/=/= -%{krel}/g' Makefile
 cp %{SOURCE1} .config
 make olddefconfig
 
@@ -58,61 +61,59 @@ mkdir -p $RPM_BUILD_ROOT/boot/efi $RPM_BUILD_ROOT/lib/modules
 mkdir -p $RPM_BUILD_ROOT/boot $RPM_BUILD_ROOT/lib/modules
 %endif
 INSTALL_MOD_PATH=$RPM_BUILD_ROOT make %{?_smp_mflags} KBUILD_SRC= mod-fw= modules_install
-#mkdir -p $RPM_BUILD_ROOT/lib/firmware/%{version}
-#INSTALL_FW_PATH=$RPM_BUILD_ROOT/lib/firmware/%{version}
+#mkdir -p $RPM_BUILD_ROOT/lib/firmware/%{kversion}
+#INSTALL_FW_PATH=$RPM_BUILD_ROOT/lib/firmware/%{kversion}
 #make INSTALL_FW_PATH=$INSTALL_FW_PATH firmware_install
 %ifarch ia64
-cp $KBUILD_IMAGE $RPM_BUILD_ROOT/boot/efi/vmlinuz-%{version}
-ln -s efi/vmlinuz-%{version} $RPM_BUILD_ROOT/boot/
+cp $KBUILD_IMAGE $RPM_BUILD_ROOT/boot/efi/vmlinuz-%{kversion}
+ln -s efi/vmlinuz-%{kversion} $RPM_BUILD_ROOT/boot/
 %else
 %ifarch ppc64
 cp vmlinux arch/powerpc/boot
-cp arch/powerpc/boot/$KBUILD_IMAGE $RPM_BUILD_ROOT/boot/vmlinuz-%{version}
+cp arch/powerpc/boot/$KBUILD_IMAGE $RPM_BUILD_ROOT/boot/vmlinuz-%{kversion}
 %else
-cp $KBUILD_IMAGE $RPM_BUILD_ROOT/boot/vmlinuz-%{version}
+cp $KBUILD_IMAGE $RPM_BUILD_ROOT/boot/vmlinuz-%{kversion}
 %endif
 %endif
 make %{?_smp_mflags} INSTALL_HDR_PATH=$RPM_BUILD_ROOT/usr KBUILD_SRC= headers_install
-cp System.map $RPM_BUILD_ROOT/boot/System.map-%{version}
-cp .config $RPM_BUILD_ROOT/boot/config-%{version}
+cp System.map $RPM_BUILD_ROOT/boot/System.map-%{kversion}
+cp .config $RPM_BUILD_ROOT/boot/config-%{kversion}
 %ifnarch ppc64
 bzip2 -9 --keep vmlinux
-mv vmlinux.bz2 $RPM_BUILD_ROOT/boot/vmlinux-%{version}.bz2
+mv vmlinux.bz2 $RPM_BUILD_ROOT/boot/vmlinux-%{kversion}.bz2
 %endif
-rm -f $RPM_BUILD_ROOT/lib/modules/%{version}/{build,source}
-mkdir -p $RPM_BUILD_ROOT/usr/src/kernels/%{version}
+rm -f $RPM_BUILD_ROOT/lib/modules/%{kversion}/{build,source}
+mkdir -p $RPM_BUILD_ROOT/usr/src/kernels/%{kversion}
 EXCLUDES="--exclude SCCS --exclude BitKeeper --exclude .svn --exclude CVS --exclude .pc --exclude .hg --exclude .git --exclude .tmp_versions --exclude=*vmlinux* --exclude=*.o --exclude=*.ko --exclude=*.cmd --exclude=Documentation --exclude=firmware --exclude .config.old --exclude .missing-syscalls.d"
-tar $EXCLUDES -cf- . | (cd $RPM_BUILD_ROOT/usr/src/kernels/%{version};tar xvf -)
-cd $RPM_BUILD_ROOT/lib/modules/%{version}
-ln -sf /usr/src/kernels/%{version} build
-ln -sf /usr/src/kernels/%{version} source
+tar $EXCLUDES -cf- . | (cd $RPM_BUILD_ROOT/usr/src/kernels/%{kversion};tar xvf -)
+cd $RPM_BUILD_ROOT/lib/modules/%{kversion}
+ln -sf /usr/src/kernels/%{kversion} build
+ln -sf /usr/src/kernels/%{kversion} source
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ -x /sbin/installkernel -a -r /boot/vmlinuz-%{version} -a -r /boot/System.map-%{version} ]; then
-cp /boot/vmlinuz-%{version} /boot/.vmlinuz-%{version}-rpm
-cp /boot/System.map-%{version} /boot/.System.map-%{version}-rpm
-rm -f /boot/vmlinuz-%{version} /boot/System.map-%{version}
-/sbin/installkernel %{version} /boot/.vmlinuz-%{version}-rpm /boot/.System.map-%{version}-rpm
-rm -f /boot/.vmlinuz-%{version}-rpm /boot/.System.map-%{version}-rpm
+if [ -x /sbin/installkernel -a -r /boot/vmlinuz-%{kversion} -a -r /boot/System.map-%{kversion} ]; then
+cp /boot/vmlinuz-%{kversion} /boot/.vmlinuz-%{kversion}-rpm
+cp /boot/System.map-%{kversion} /boot/.System.map-%{kversion}-rpm
+rm -f /boot/vmlinuz-%{kversion} /boot/System.map-%{kversion}
+/sbin/installkernel %{kversion} /boot/.vmlinuz-%{kversion}-rpm /boot/.System.map-%{kversion}-rpm
+rm -f /boot/.vmlinuz-%{kversion}-rpm /boot/.System.map-%{kversion}-rpm
 fi
 rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
 
 %postun
 rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
-# XXX - can't run this since we're not setting an extra version (EXTRAVERSION in Makefile)
-# XXX - will remove the initramfs/initrd on same version but different releases upgrade
-#test -e /boot/initramfs-%{version}.img && rm -f /boot/initramfs-%{version}.img
+test -e /boot/initramfs-%{kversion}.img && rm -f /boot/initramfs-%{kversion}.img
 
 %files
 %defattr (-, root, root)
-/lib/modules/%{version}
-%exclude /lib/modules/%{version}/build
-%exclude /lib/modules/%{version}/source
+/lib/modules/%{kversion}
+%exclude /lib/modules/%{kversion}/build
+%exclude /lib/modules/%{kversion}/source
 /boot/*
-#/lib/firmware/%{version}
+#/lib/firmware/%{kversion}
 
 %files headers
 %defattr (-, root, root)
@@ -120,7 +121,7 @@ rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
 
 %files devel
 %defattr (-, root, root)
-/usr/src/kernels/%{version}
-/lib/modules/%{version}/build
-/lib/modules/%{version}/source
+/usr/src/kernels/%{kversion}
+/lib/modules/%{kversion}/build
+/lib/modules/%{kversion}/source
 
