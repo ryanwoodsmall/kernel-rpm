@@ -6,7 +6,7 @@
 Name: kernel
 Summary: The Linux Kernel
 Version: %{kver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
