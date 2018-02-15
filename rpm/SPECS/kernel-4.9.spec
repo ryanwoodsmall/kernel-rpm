@@ -1,12 +1,12 @@
 %define kmaj 4
 %define kmin 9
-%define kpat 80
+%define kpat 81
 %define kver %{kmaj}.%{kmin}.%{kpat}
 
 Name: kernel
 Summary: The Linux Kernel
 Version: %{kver}
-Release: 0%{?dist}
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
@@ -101,7 +101,9 @@ rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
 
 %postun
 rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
-test -e /boot/initramfs-%{version}.img && rm -f /boot/initramfs-%{version}.img
+# XXX - can't run this since we're not setting an extra version (EXTRAVERSION in Makefile)
+# XXX - will remove the initramfs/initrd on same version but different releases upgrade
+#test -e /boot/initramfs-%{version}.img && rm -f /boot/initramfs-%{version}.img
 
 %files
 %defattr (-, root, root)

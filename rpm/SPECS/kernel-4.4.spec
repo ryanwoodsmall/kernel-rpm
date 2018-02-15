@@ -1,7 +1,7 @@
 Name: kernel
 Summary: The Linux Kernel
-Version: 4.4.52
-Release: 8%{?dist}
+Version: 4.4.115
+Release: 9%{?dist}
 License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
@@ -98,7 +98,9 @@ rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
 
 %postun
 rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
-test -e /boot/initramfs-%{version}.img && rm -f /boot/initramfs-%{version}.img
+# XXX - can't run this since we're not setting an extra version (EXTRAVERSION in Makefile)
+# XXX - will remove the initramfs/initrd on same version but different releases upgrade
+#test -e /boot/initramfs-%{version}.img && rm -f /boot/initramfs-%{version}.img
 
 %files
 %defattr (-, root, root)
