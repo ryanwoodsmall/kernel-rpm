@@ -1,6 +1,6 @@
 %define kmaj 4
 %define kmin 14
-%define kpat 19
+%define kpat 20
 %define kver %{kmaj}.%{kmin}.%{kpat}
 %define krel 3
 %define kversion %{kver}-%{krel}
@@ -16,7 +16,6 @@ URL: http://www.kernel.org
 Source0: linux-%{version}.tar.xz
 Source1: kernel-config-%{kmaj}.%{kmin}
 BuildRoot: %{_tmppath}/%{name}-%{PACKAGE_VERSION}-root
-#Provides:  kernel-%{version} kernel-firmware linux-firmware
 Provides:  kernel-%{version}
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
 %define debug_package %{nil}
@@ -61,9 +60,6 @@ mkdir -p $RPM_BUILD_ROOT/boot/efi $RPM_BUILD_ROOT/lib/modules
 mkdir -p $RPM_BUILD_ROOT/boot $RPM_BUILD_ROOT/lib/modules
 %endif
 INSTALL_MOD_PATH=$RPM_BUILD_ROOT make %{?_smp_mflags} KBUILD_SRC= mod-fw= modules_install
-#mkdir -p $RPM_BUILD_ROOT/lib/firmware/%{kversion}
-#INSTALL_FW_PATH=$RPM_BUILD_ROOT/lib/firmware/%{kversion}
-#make INSTALL_FW_PATH=$INSTALL_FW_PATH firmware_install
 %ifarch ia64
 cp $KBUILD_IMAGE $RPM_BUILD_ROOT/boot/efi/vmlinuz-%{kversion}
 ln -s efi/vmlinuz-%{kversion} $RPM_BUILD_ROOT/boot/
@@ -113,7 +109,6 @@ test -e /boot/initramfs-%{kversion}.img && rm -f /boot/initramfs-%{kversion}.img
 %exclude /lib/modules/%{kversion}/build
 %exclude /lib/modules/%{kversion}/source
 /boot/*
-#/lib/firmware/%{kversion}
 
 %files headers
 %defattr (-, root, root)
