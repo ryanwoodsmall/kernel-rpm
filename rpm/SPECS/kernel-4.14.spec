@@ -2,7 +2,7 @@
 %define kmin 14
 %define kpat 72
 %define kver %{kmaj}.%{kmin}.%{kpat}
-%define krel 4
+%define krel 5
 %define kversion %{kver}-%{krel}
 
 Name: kernel
@@ -99,10 +99,16 @@ rm -f /boot/vmlinuz-%{kversion} /boot/System.map-%{kversion}
 /sbin/installkernel %{kversion} /boot/.vmlinuz-%{kversion}-rpm /boot/.System.map-%{kversion}-rpm
 rm -f /boot/.vmlinuz-%{kversion}-rpm /boot/.System.map-%{kversion}-rpm
 fi
-rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
+if $(rpm --eval '%{rhel}' | grep -q ^7) ; then
+test -e /boot/grub2/grub.cfg && grub2-mkconfig -o /boot/grub2/grub.cfg
+test -e /boot/efi/EFI/centos/grub.cfg && grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg
+fi
 
 %postun
-rpm --eval '%{rhel}' | grep -q ^7 && grub2-mkconfig -o /boot/grub2/grub.cfg
+if $(rpm --eval '%{rhel}' | grep -q ^7) ; then
+test -e /boot/grub2/grub.cfg && grub2-mkconfig -o /boot/grub2/grub.cfg
+test -e /boot/efi/EFI/centos/grub.cfg && grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg
+fi
 test -e /boot/initramfs-%{kversion}.img && rm -f /boot/initramfs-%{kversion}.img
 
 %files
