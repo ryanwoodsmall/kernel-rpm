@@ -2,7 +2,7 @@
 %define kmin 14
 %define kpat 72
 %define kver %{kmaj}.%{kmin}.%{kpat}
-%define krel 3
+%define krel 4
 %define kversion %{kver}-%{krel}
 
 Name: kernel
@@ -13,10 +13,12 @@ License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
 URL: http://www.kernel.org
-Source0: linux-%{version}.tar.xz
-Source1: kernel-config-%{kmaj}.%{kmin}
+Source0: https://cdn.kernel.org/pub/linux/kernel/v%{kmaj}.x/linux-%{version}.tar.xz
+Source1: https://raw.githubusercontent.com/ryanwoodsmall/kernel-rpm/master/rpm/SOURCES/kernel-config-%{kmaj}.%{kmin}
 BuildRoot: %{_tmppath}/%{name}-%{PACKAGE_VERSION}-root
 Provides:  kernel-%{version}
+BuildRequires: elfutils-devel
+BuildRequires: elfutils-libelf-devel
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
 %define debug_package %{nil}
 
