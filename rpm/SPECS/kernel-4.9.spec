@@ -1,6 +1,6 @@
 %define kmaj 4
 %define kmin 9
-%define kpat 81
+%define kpat 186
 %define kver %{kmaj}.%{kmin}.%{kpat}
 
 Name: kernel
@@ -11,8 +11,8 @@ License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
 URL: http://www.kernel.org
-Source0: linux-%{version}.tar.xz
-Source1: kernel-config-%{kmaj}.%{kmin}
+Source0: https://cdn.kernel.org/pub/linux/kernel/v%{kmaj}.x/linux-%{version}.tar.xz
+Source1: https://raw.githubusercontent.com/ryanwoodsmall/kernel-rpm/master/rpm/SOURCES/kernel-config-%{kmaj}.%{kmin}
 BuildRoot: %{_tmppath}/%{name}-%{PACKAGE_VERSION}-root
 Provides:  kernel-%{version} kernel-firmware linux-firmware
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
