@@ -1,14 +1,21 @@
+%define kmaj 4
+%define kmin 4
+%define kpat 186
+%define kver %{kmaj}.%{kmin}.%{kpat}
+%define krel 9
+%define kversion %{kver}-%{krel}
+
 Name: kernel
 Summary: The Linux Kernel
-Version: 4.4.115
-Release: 9%{?dist}
+Version: %{kver}
+Release: %{krel}%{?dist}
 License: GPL
 Group: System Environment/Kernel
 Vendor: The Linux Community
 URL: http://www.kernel.org
-Source0: linux-%{version}.tar.xz
-Source1: kernel-config-4.4
-Patch0: 1000-ath-Ignore-regdomain-in-eeprom.patch
+Source0: https://cdn.kernel.org/pub/linux/kernel/v%{kmaj}.x/linux-%{version}.tar.xz
+Source1: https://raw.githubusercontent.com/ryanwoodsmall/kernel-rpm/master/rpm/SOURCES/kernel-config-%{kmaj}.%{kmin}
+# Patch0: 1000-ath-Ignore-regdomain-in-eeprom.patch
 BuildRoot: %{_tmppath}/%{name}-%{PACKAGE_VERSION}-root
 Provides:  kernel-%{version} kernel-firmware linux-firmware
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
@@ -39,7 +46,7 @@ against the %{version} kernel package.
 
 %prep
 %setup -q -n linux-%{version}
-%patch0 -p1 -b .ath-ignore-eeprom-regdomain
+# % patch0 -p1 -b .ath-ignore-eeprom-regdomain
 cp %{SOURCE1} .config
 make olddefconfig
 
