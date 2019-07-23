@@ -2,7 +2,7 @@
 %define kmin 14
 %define kpat 134
 %define kver %{kmaj}.%{kmin}.%{kpat}
-%define krel 5
+%define krel 6
 %define kversion %{kver}-%{krel}
 
 Name: kernel
