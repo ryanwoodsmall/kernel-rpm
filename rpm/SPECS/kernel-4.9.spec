@@ -1,6 +1,6 @@
 %define kmaj 4
 %define kmin 9
-%define kpat 204
+%define kpat 205
 %define kver %{kmaj}.%{kmin}.%{kpat}
 
 Name: kernel
