@@ -1,10 +1,8 @@
-# % define _smp_mflags -j1
-
 %define kmaj 5
 %define kmin 4
-%define kpat 20
+%define kpat 21
 %define kver %{kmaj}.%{kmin}.%{kpat}
-%define krel 8
+%define krel 9
 %define kversion %{kver}-%{krel}
 
 Name: kernel
@@ -101,7 +99,6 @@ ln -sf /usr/src/kernels/%{kversion} source
 rm -rf $RPM_BUILD_ROOT
 
 %post
-#set -x
 if [ -x /sbin/installkernel -a -r /boot/vmlinuz-%{kversion} -a -r /boot/System.map-%{kversion} ]; then
 cp /boot/vmlinuz-%{kversion} /boot/.vmlinuz-%{kversion}-rpm
 cp /boot/System.map-%{kversion} /boot/.System.map-%{kversion}-rpm
@@ -109,20 +106,19 @@ rm -f /boot/vmlinuz-%{kversion} /boot/System.map-%{kversion}
 /sbin/installkernel %{kversion} /boot/.vmlinuz-%{kversion}-rpm /boot/.System.map-%{kversion}-rpm
 rm -f /boot/.vmlinuz-%{kversion}-rpm /boot/.System.map-%{kversion}-rpm
 fi
+# XXX - checks need to be -gt 6 for centos 8, or use lsb_release?
 if $(rpm --eval '%{rhel}' | grep -q ^7) ; then
-test -e /boot/grub2/grub.cfg && grub2-mkconfig -o /boot/grub2/grub.cfg
-test -e /boot/efi/EFI/centos/grub.cfg && grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg
+if [ -e /boot/grub2/grub.cfg ] ; then grub2-mkconfig -o /boot/grub2/grub.cfg ; fi
+if [ -e /boot/efi/EFI/centos/grub.cfg ] ; then grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg ; fi
 fi
-#set +x
 
 %postun
-#set -x
+# XXX - checks need to be -gt 6 for centos 8, or use lsb_release?
 if $(rpm --eval '%{rhel}' | grep -q ^7) ; then
-test -e /boot/grub2/grub.cfg && grub2-mkconfig -o /boot/grub2/grub.cfg
-test -e /boot/efi/EFI/centos/grub.cfg && grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg
+if [ -e /boot/grub2/grub.cfg ] ; then grub2-mkconfig -o /boot/grub2/grub.cfg ; fi
+if [ -e /boot/efi/EFI/centos/grub.cfg ] ; then grub2-mkconfig -o /boot/efi/EFI/centos/grub.cfg ; fi
 fi
 test -e /boot/initramfs-%{kversion}.img && rm -f /boot/initramfs-%{kversion}.img || true
-#set +x
 
 %files
 %defattr (-, root, root)
