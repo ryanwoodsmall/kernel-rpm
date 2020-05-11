@@ -1,6 +1,6 @@
 %define kmaj 4
 %define kmin 19
-%define kpat 120
+%define kpat 121
 %define kver %{kmaj}.%{kmin}.%{kpat}
 %define krel 7
 %define kversion %{kver}-%{krel}
