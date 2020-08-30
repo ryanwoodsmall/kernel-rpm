@@ -11,7 +11,7 @@ for 4.19:
 ```
 mkdir -p ${HOME}/rpmbuild/{SPECS,SOURCES}
 curl -kLo ${HOME}/rpmbuild/SPECS/kernel.spec https://raw.githubusercontent.com/ryanwoodsmall/kernel-rpm/master/rpm/SPECS/kernel-4.19.spec
-spectool -g -R ${HOME}/rpmbuild/SPECS/kernel.spec
+spectool -g -A -R ${HOME}/rpmbuild/SPECS/kernel.spec
 ( time ( rpmbuild -ba --clean ${HOME}/rpmbuild/SPECS/kernel.spec ) ) 2>&1 | tee /tmp/kernelbuild.out
 ```
 
