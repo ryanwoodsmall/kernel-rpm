@@ -1,6 +1,6 @@
 %define kmaj 4
 %define kmin 19
-%define kpat 197
+%define kpat 198
 %define kver %{kmaj}.%{kmin}.%{kpat}
 %define krel 7
 %define kversion %{kver}-%{krel}
@@ -17,8 +17,12 @@ Source0: https://cdn.kernel.org/pub/linux/kernel/v%{kmaj}.x/linux-%{version}.tar
 Source1: https://raw.githubusercontent.com/ryanwoodsmall/kernel-rpm/master/rpm/SOURCES/kernel-config-%{kmaj}.%{kmin}
 BuildRoot: %{_tmppath}/%{name}-%{PACKAGE_VERSION}-root
 Provides:  kernel-%{version}
+BuildRequires: bison
 BuildRequires: elfutils-devel
 BuildRequires: elfutils-libelf-devel
+BuildRequires: flex
+BuildRequires: openssl
+BuildRequires: openssl-devel
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
 %define debug_package %{nil}
 
