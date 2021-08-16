@@ -23,6 +23,8 @@ BuildRequires: bison
 BuildRequires: elfutils-devel
 BuildRequires: elfutils-libelf-devel
 BuildRequires: flex
+BuildRequires: gcc
+BuildRequires: make
 BuildRequires: openssl
 BuildRequires: openssl-devel
 BuildRequires: rsync
