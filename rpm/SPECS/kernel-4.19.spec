@@ -1,6 +1,6 @@
 %define kmaj 4
 %define kmin 19
-%define kpat 203
+%define kpat 204
 %define kver %{kmaj}.%{kmin}.%{kpat}
 %define krel 7
 %define kversion %{kver}-%{krel}
@@ -21,6 +21,8 @@ BuildRequires: bison
 BuildRequires: elfutils-devel
 BuildRequires: elfutils-libelf-devel
 BuildRequires: flex
+BuildRequires: gcc
+BuildRequires: make
 BuildRequires: openssl
 BuildRequires: openssl-devel
 %define __spec_install_post /usr/lib/rpm/brp-compress || :
