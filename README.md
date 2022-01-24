@@ -6,6 +6,16 @@ built for and run/tested only on centos 7 x86\_64
 
 # build
 
+install deps and fetch files:
+
+```
+sudo yum -y install yum-utils rpm-build rpmdevtools
+for i in ~/SPECS/kernel-* ; do
+  spectool -g -A -R $i
+  sudo yum-builddep -y $i
+done
+```
+
 for 4.19:
 
 ```
